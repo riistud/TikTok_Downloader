@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Video TikTok</title>
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Google Fonts (Poppins) -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            flex-direction: column;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        p {
+            font-size: 1.1em;
+            font-weight: 400;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            font-size: 1em;
+            width: 100%;
+            max-width: 300px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            outline: none;
+            transition: box-shadow 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.1s ease, background-color 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .paste-btn {
+            background: linear-gradient(135deg, #0d47a1, #1565c0);
+            color: white;
+        }
+
+        .paste-btn:hover {
+            background: linear-gradient(135deg, #1565c0, #0d47a1);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+            color: white;
+            width: 100%;
+            max-width: 360px;
+            justify-content: center;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #388e3c, #4caf50);
+        }
+
+        .download-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #statusMessage {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #statusMessage p {
+            margin: 0;
+            font-size: 0.95em;
+        }
+
+        #statusMessage a {
+            color: #4caf50;
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: 5px;
+        }
+
+        #statusMessage a:hover {
+            background: #e0e0e0;
+        }
+
+        /* Responsif */
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            p {
+                font-size: 0.95em;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            input[type="text"] {
+                max-width: 100%;
+            }
+
+            button {
+                padding: 10px 15px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Download Video TikTok</h1>
+        <p>TikTok Downloader Tanpa Watermark. Cepat. Semua perangkat</p>
+        <div class="input-container">
+            <input type="text" id="tiktokUrl" placeholder="Tempel tautan TikTok di sini">
+            <button class="paste-btn" onclick="pasteUrl()"><i class="fas fa-copy"></i> Copy</button>
+        </div>
+        <button class="download-btn" onclick="downloadVideo()" disabled><i class="fas fa-download"></i> Download</button>
+        <div id="statusMessage"></div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('tiktokUrl');
+        const downloadBtn = document.querySelector('.download-btn');
+        const statusMessageDiv = document.getElementById('statusMessage');
+
+        // Fungsi untuk menghasilkan angka acak (6 digit)
+        function generateRandomNumber() {
+            return Math.floor(100000 + Math.random() * 900000); // Menghasilkan angka acak 6 digit
+        }
+
+        // Fungsi untuk menempelkan URL dari clipboard
+        async function pasteUrl() {
+            try {
+                const text = await navigator.clipboard.readText();
+                urlInput.value = text;
+                checkUrl();
+            } catch (err) {
+                console.error('Gagal menempelkan URL:', err);
+                statusMessageDiv.innerHTML = '<p style="color: red;">Gagal menempelkan URL. Silakan masukkan secara manual.</p>';
+            }
+        }
+
+        // Fungsi untuk memeriksa apakah URL valid
+        function checkUrl() {
+            if (urlInput.value.includes('tiktok.com')) {
+                downloadBtn.disabled = false;
+                statusMessageDiv.innerHTML = '';
+            } else {
+                downloadBtn.disabled = true;
+                statusMessageDiv.innerHTML = '<p style="color: yellow;">Masukkan URL TikTok yang valid.</p>';
+            }
+        }
+
+        // Fungsi untuk mengunduh video secara langsung
+        async function downloadVideo() {
+            const url = urlInput.value;
+            if (!url) {
+                statusMessageDiv.innerHTML = '<p style="color: red;">URL tidak boleh kosong.</p>';
+                return;
+            }
+
+            try {
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+                statusMessageDiv.innerHTML = '<p style="color: yellow;">Sedang memproses URL...</p>';
+
+                // Langkah 1: Panggil API untuk mendapatkan URL video
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // Timeout 10 detik
+
+                const apiResponse = await fetch(`https://api.riicode.my.id/api/download/tiktokdl?url=${encodeURIComponent(url)}`, {
+                    signal: controller.signal
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!apiResponse.ok) {
+                    throw new Error(`Gagal mengambil data dari API. Status: ${apiResponse.status}`);
+                }
+
+                const data = await apiResponse.json();
+
+                if (!data.status || !data.result || !data.result.video_nowm) {
+                    throw new Error('URL video tidak ditemukan atau tidak valid.');
+                }
+
+                const videoUrl = data.result.video_nowm;
+
+                // Langkah 2: Unduh video sebagai Blob
+                statusMessageDiv.innerHTML = '<p style="color: yellow;">Mengunduh video...</p>';
+                const videoResponse = await fetch(videoUrl);
+
+                if (!videoResponse.ok) {
+                    throw new Error(`Gagal mengunduh video. Status: ${videoResponse.status}`);
+                }
+
+                const videoBlob = await videoResponse.blob();
+
+                // Langkah 3: Buat URL objek dari Blob dan unduh dengan nama file rcdl-<angka_acak>.mp4
+                const randomNumber = generateRandomNumber();
+                const fileName = `rcdl-${randomNumber}.mp4`;
+
+                const blobUrl = window.URL.createObjectURL(videoBlob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = blobUrl;
+                downloadLink.download = fileName; // Nama file dengan format rcdl-<angka_acak>.mp4
+                downloadLink.style.display = 'none';
+                document.body.appendChild(downloadLink);
+
+                downloadLink.click();
+
+                // Bersihkan URL objek setelah unduhan
+                window.URL.revokeObjectURL(blobUrl);
+                document.body.removeChild(downloadLink);
+
+                // Langkah 4: Tampilkan SweetAlert2
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: `Video berhasil diunduh`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#4caf50'
+                });
+
+                statusMessageDiv.innerHTML = `<p style="color: #4caf50;">Unduhan selesai !</p>`;
+            } catch (err) {
+                console.error('Error:', err);
+                if (err.name === 'AbortError') {
+                    statusMessageDiv.innerHTML = '<p style="color: red;">Permintaan terlalu lama (timeout). Coba lagi nanti.</p>';
+                } else if (err.message.includes('Failed to fetch')) {
+                    statusMessageDiv.innerHTML = '<p style="color: red;">Gagal terhubung ke server. Periksa koneksi internet atau coba API lain.</p>';
+                } else {
+                    statusMessageDiv.innerHTML = `<p style="color: red;">Terjadi kesalahan: ${err.message}</p>`;
+                }
+
+                // Fallback: Tampilkan link pratinjau jika unduhan gagal
+                if (typeof videoUrl !== 'undefined') {
+                    statusMessageDiv.innerHTML += `<p style="color: yellow;">Coba unduh manual: <a href="${videoUrl}" target="_blank">Klik di sini</a></p>`;
+                }
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+            }
+        }
+
+        // Event listener untuk memeriksa URL saat input berubah
+        urlInput.addEventListener('input', checkUrl);
+    </script>
+</body>
+</html>
